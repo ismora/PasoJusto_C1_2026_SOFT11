@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Paso Justo - Cortesía Vial</title>
+    <!-- Bootstrap 5 + Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+
+<div class="container mt-4">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold text-primary"><i class="fas fa-traffic-light me-2"></i> PASO JUSTO</h1>
+            <p class="lead">Sistema de incentivos de cortesía vial en tiempo real</p>
+            <hr>
+        </div>
+    </div>
+
+    <!-- Login / Info usuario -->
+    <div class="row mb-4">
+        <div class="col-md-6 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-user-circle fa-2x text-primary"></i>
+                            <span id="userNameDisplay" class="ms-2 fw-bold">Invitado</span>
+                        </div>
+                        <div class="input-group w-auto">
+                            <input type="email" id="correoInput" class="form-control form-control-sm" placeholder="correo" value="rose@test.ac.cr">
+                            <input type="text" id="nombreInput" class="form-control form-control-sm" placeholder="nombre" value="Rose">
+                            <button id="loginBtn" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt me-1"></i> Ingresar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="courtesy-tab" data-bs-toggle="tab" data-bs-target="#courtesy" type="button" role="tab"><i class="fas fa-car me-2"></i> Cortesía</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="points-tab" data-bs-toggle="tab" data-bs-target="#points" type="button" role="tab"><i class="fas fa-trophy me-2"></i> Mis Puntos</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="commerce-tab" data-bs-toggle="tab" data-bs-target="#commerce" type="button" role="tab"><i class="fas fa-shopping-bag me-2"></i> Canje & QR</button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- TAB CORTESÍA -->
+        <div class="tab-pane fade show active" id="courtesy" role="tabpanel">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-hand-peace me-2"></i>Solicitar cortesía</h5>
+                </div>
+                <div class="card-body">
+                    <p>¿Lleva más de 2 minutos detenido en un alto sin poder incorporarse? Notificar a conductores cercanos.</p>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                        <input type="text" id="ubicacionInput" class="form-control" placeholder="Intersección / lugar (ej: Zapote, frente a escuela)">
+                        <button id="requestCourtesyBtn" class="btn btn-warning"><i class="fas fa-exclamation-triangle me-2"></i> Pedir cortesía</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Solicitudes activas cercanas</h5>
+                </div>
+                <div class="card-body" id="pendingRequestsList">
+                    <i class="fas fa-spinner fa-pulse me-2"></i> Cargando solicitudes...
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB MIS PUNTOS -->
+        <div class="tab-pane fade" id="points" role="tabpanel">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-coins me-2"></i>Balance de cortesía</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <div class="display-6 fw-bold text-primary" id="asignadosPoints">0</div>
+                                <div><i class="fas fa-medal me-1"></i> Puntos asignados</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <div class="display-6 fw-bold text-warning" id="canjeadosPoints">0</div>
+                                <div><i class="fas fa-exchange-alt me-1"></i> Puntos canjeados</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded p-3 bg-light">
+                                <div class="display-6 fw-bold text-success" id="disponiblesPoints">0</div>
+                                <div><i class="fas fa-check-circle me-1"></i> Puntos disponibles</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historial de canjes</h5>
+                </div>
+                <div class="card-body" id="redemptionHistoryList">
+                    <i class="fas fa-inbox me-2"></i> Sin canjes aún.
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB COMERCIOS Y PRODUCTOS -->
+        <div class="tab-pane fade" id="commerce" role="tabpanel">
+            <!-- Leyenda de colores -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Leyenda de colores</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="color-box verde me-2"></div>
+                                        <span><i class="fas fa-check-circle text-success me-1"></i> <strong>Verde:</strong> Puedes canjear</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="color-box naranja me-2"></div>
+                                        <span><i class="fas fa-chart-line text-warning me-1"></i> <strong>Naranja:</strong> Falta menos del 50%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="color-box rojo me-2"></div>
+                                        <span><i class="fas fa-times-circle text-danger me-1"></i> <strong>Rojo:</strong> Falta más del 50%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos container -->
+            <div id="productos-container" class="row">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div>
+                    <p class="mt-3"><i class="fas fa-spinner fa-pulse me-2"></i> Cargando productos...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para QR -->
+<div id="qrModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-qrcode me-2"></i>Código QR para canje</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="qrCodeContainer" class="d-flex justify-content-center"></div>
+                <p class="mt-3 text-muted"><i class="fas fa-store me-1"></i> Presenta este código en el comercio</p>
+                <button id="confirmRedeemBtn" class="btn btn-success w-100"><i class="fas fa-check-circle me-2"></i> Simular canje (descontar puntos)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>
